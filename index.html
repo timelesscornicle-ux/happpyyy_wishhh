@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Special Wish Protocol: Project S.R.</title>
+    <title>সুমাইয়ার জন্য স্পেশাল উইশ</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- CSS RESET & BASE STYLES --- */
+        /* --- CSS STYLING --- */
         :root {
             --primary-neon: #00f7ff;
             --secondary-neon: #ff00e6;
             --bg-dark: #02020c;
             --metal-dark: #1a1a24;
             --metal-light: #3a3a4a;
-            --hologram-blue: rgba(0, 247, 255, 0.6);
         }
 
         * {
@@ -28,16 +28,14 @@
         body {
             background-color: var(--bg-dark);
             color: var(--primary-neon);
-            font-family: 'Share Tech Mono', monospace;
+            font-family: 'Hind Siliguri', sans-serif; /* Bangla Font */
             height: 100vh;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            perspective: 1000px; /* For 3D effects */
         }
 
-        /* The canvas for the dynamic starfield background */
         #space-canvas {
             position: fixed;
             top: 0;
@@ -48,7 +46,7 @@
             opacity: 0.8;
         }
 
-        /* --- START SCREEN OVERLAY --- */
+        /* --- START SCREEN --- */
         #initial-overlay {
             position: fixed;
             top: 0;
@@ -62,223 +60,65 @@
             align-items: center;
             z-index: 999;
             transition: all 1s ease-in-out;
+            text-align: center;
         }
 
         .sys-msg {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
+            font-size: 2rem;
             margin-bottom: 30px;
-            letter-spacing: 2px;
+            font-weight: 700;
+            color: #fff;
             text-shadow: 0 0 10px var(--primary-neon);
-            animation: textFlicker 2s infinite alternate;
         }
 
         #engage-btn {
-            padding: 20px 50px;
+            padding: 15px 40px;
             background: transparent;
-            border: 3px solid var(--primary-neon);
+            border: 2px solid var(--primary-neon);
             color: var(--primary-neon);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.2rem;
+            font-family: 'Hind Siliguri', sans-serif;
+            font-size: 1.5rem;
             font-weight: bold;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
+            border-radius: 50px;
             transition: 0.3s;
             box-shadow: 0 0 20px rgba(0, 247, 255, 0.3);
-        }
-
-        #engage-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, var(--primary-neon), transparent);
-            transition: 0.5s;
-        }
-
-        #engage-btn:hover::before {
-            left: 100%;
+            animation: pulseBtn 2s infinite;
         }
 
         #engage-btn:hover {
+            background: var(--primary-neon);
+            color: #000;
             box-shadow: 0 0 40px var(--primary-neon);
-            background: rgba(0, 247, 255, 0.1);
         }
 
-        /* --- MAIN STAGE CONTAINER --- */
+        @keyframes pulseBtn {
+            0% { transform: scale(1); box-shadow: 0 0 10px var(--primary-neon); }
+            50% { transform: scale(1.05); box-shadow: 0 0 25px var(--primary-neon); }
+            100% { transform: scale(1); box-shadow: 0 0 10px var(--primary-neon); }
+        }
+
+        /* --- MAIN STAGE --- */
         #main-stage {
             position: relative;
             width: 90%;
-            max-width: 800px;
+            max-width: 600px;
             height: 80vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            opacity: 0; /* Hidden initially */
+            opacity: 0;
             transform: translateY(50px);
             transition: all 1.5s ease-out;
         }
-        
-        /* Style hooks for later parts */
-        .hologram-emitter-area {
-            position: absolute;
-            top: 280px; /* Adjust based on robot height */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 300px;
-            height: 0; /* Starts with 0 height */
-            z-index: 10;
-            display: flex;
-            justify-content: center;
-            perspective: 500px;
-            transition: height 2s ease-in-out;
-        }
 
-        /* --- ANIMATION KEYFRAMES (General) --- */
-        @keyframes textFlicker {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; text-shadow: 0 0 20px var(--primary-neon), 0 0 30px var(--secondary-neon); }
-        }
-
-        /* PLACEHOLDER CSS FOR PART 2 ELEMENTS TO AVOID ERRORS IF LOADED ALONE */
-        .robot-unit, .terminal-output { display: none; }
-
-    </style>
-</head>
-<body>
-
-    <audio id="bg-audio" loop preload="auto">
-        <source src="https://cdn.pixabay.com/audio/2023/09/06/audio_50c3090400.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
-
-    <canvas id="space-canvas"></canvas>
-
-    <div id="initial-overlay">
-        <h1 class="sys-msg">PROTOCOL: SUMAIYA RAHMAN</h1>
-        <p style="margin-bottom: 20px; color: #aaa;">Awaiting manual engagement...</p>
-        <button id="engage-btn">INITIALIZE SYSTEM</button>
-    </div>
-
-    <div id="main-stage">
-        
-        <div class="robot-unit">
-            <div class="robot-head">
-                <div class="eye-visor">
-                    <div class="scanner-bar"></div>
-                </div>
-                <div class="antenna-left"></div>
-                <div class="antenna-right"></div>
-            </div>
-            <div class="robot-torso">
-                <div class="core-reactor"></div>
-                <div class="projector-lens"></div>
-            </div>
-             <div class="robot-arm left"></div>
-             <div class="robot-arm right"></div>
-        </div>
-
-        <div class="hologram-emitter-area" id="holo-stage">
-            <div class="holo-light-cone"></div>
-            <div class="holo-image-container">
-                 <img src="sumaiya.jpg" alt="Sumaiya" class="projected-image" onerror="this.src='https://via.placeholder.com/200x250/00f7ff/000000?text=Image+Not+Found';">
-            </div>
-        </div>
-
-        <div class="terminal-output">
-            <div class="terminal-header"> Let's celebrate || System Status: Active</div>
-            <div class="terminal-body">
-                <span id="typewriter-text"></span><span class="blinking-cursor">_</span>
-            </div>
-        </div>
-
-    </div>
-
-    <script>
-        // Background Particle System (More advanced than before)
-        const canvas = document.getElementById('space-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        let particles = [];
-        const particleCount = 200;
-
-        class StarParticle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 1.5;
-                // Some move up, some move down for a parallax effect
-                this.speedY = (Math.random() - 0.5) * 0.5; 
-                this.speedX = (Math.random() - 0.5) * 0.2;
-                this.brightness = Math.random();
-            }
-            update() {
-                this.y += this.speedY;
-                this.x += this.speedX;
-                // Wrap around screen
-                if (this.y < 0) this.y = canvas.height;
-                if (this.y > canvas.height) this.y = 0;
-                if (this.x < 0) this.x = canvas.width;
-                if (this.x > canvas.width) this.x = 0;
-                
-                // Twinkle effect
-                this.brightness += (Math.random() - 0.5) * 0.1;
-                if(this.brightness > 1) this.brightness = 1;
-                if(this.brightness < 0.3) this.brightness = 0.3;
-            }
-            draw() {
-                ctx.fillStyle = `rgba(150, 220, 255, ${this.brightness})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        function initBg() {
-            particles = [];
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new StarParticle());
-            }
-        }
-
-        function animateBg() {
-            ctx.fillStyle = 'rgba(2, 2, 12, 0.2)'; // Create trailing effect
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-            requestAnimationFrame(animateBg);
-        }
-
-        initBg();
-        animateBg();
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initBg();
-        });
-
-        // --- END OF PART 1 JS ---
-        // Part 2 JS will continue here...
-    </script>
-
-    <style>
-        /* --- ROBOT DESIGN (DETAILED) --- */
-        /* This overrides the hidden state from Part 1 */
+        /* --- ROBOT DESIGN --- */
         .robot-unit {
-            display: block; 
             position: relative;
             width: 200px;
             height: 280px;
-            margin-top: 50px;
+            margin-top: 30px;
             z-index: 20;
             animation: robotFloat 4s ease-in-out infinite;
         }
@@ -317,16 +157,6 @@
             opacity: 0.8;
         }
 
-        .antenna-left, .antenna-right {
-            width: 4px;
-            height: 30px;
-            background: var(--metal-light);
-            position: absolute;
-            top: -25px;
-        }
-        .antenna-left { left: 30px; transform: rotate(-15deg); }
-        .antenna-right { right: 30px; transform: rotate(15deg); }
-
         .robot-torso {
             width: 100px;
             height: 120px;
@@ -351,49 +181,34 @@
             animation: pulseCore 1.5s infinite;
         }
 
-        .projector-lens {
-            width: 60px;
-            height: 10px;
-            background: #222;
+        /* --- HOLOGRAM --- */
+        .holo-emitter-area {
             position: absolute;
-            bottom: 10px;
-            border-radius: 5px;
-            border-top: 2px solid var(--primary-neon);
+            top: 130px; /* Inside chest */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
         }
 
-        .robot-arm {
-            width: 25px;
-            height: 90px;
-            background: var(--metal-light);
-            position: absolute;
-            top: 100px;
-            border-radius: 10px;
-            border: 1px solid var(--primary-neon);
-        }
-        .robot-arm.left { left: 15px; transform: rotate(10deg); }
-        .robot-arm.right { right: 15px; transform: rotate(-10deg); }
-
-        /* --- HOLOGRAM EFFECTS --- */
         .holo-light-cone {
-            width: 200px;
-            height: 0; /* Animated later via JS */
-            background: linear-gradient(to top, rgba(0, 247, 255, 0.1), transparent);
-            border-left: 1px solid rgba(0, 247, 255, 0.3);
-            border-right: 1px solid rgba(0, 247, 255, 0.3);
+            width: 220px;
+            height: 0;
+            background: linear-gradient(to top, rgba(0, 247, 255, 0.15), transparent);
             clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
             position: absolute;
-            top: 0;
-            left: 50px; /* Centering tweak */
+            top: 50px;
             transition: height 2s ease-in-out;
-            pointer-events: none;
         }
 
         .holo-image-container {
-            width: 220px;
-            height: 280px;
+            width: 200px;
+            height: 250px;
             position: absolute;
-            top: 20px;
-            left: 40px;
+            top: 70px;
             opacity: 0;
             transform: scale(0.8);
             transition: all 1.5s ease-in;
@@ -403,244 +218,227 @@
             background: rgba(0, 20, 40, 0.5);
         }
 
-        /* The uploaded image styling */
         .projected-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* This gives the blue holographic look */
-            filter: sepia(100%) hue-rotate(180deg) saturate(300%) contrast(1.2);
-            mix-blend-mode: screen; 
+            filter: sepia(100%) hue-rotate(180deg) saturate(200%) contrast(1.1);
             opacity: 0.9;
         }
 
-        /* Scanlines overlay for the image */
-        .holo-image-container::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(0,0,0,0.5) 0px,
-                rgba(0,0,0,0.5) 2px,
-                transparent 2px,
-                transparent 4px
-            );
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        /* --- TERMINAL / DIALOGUE BOX --- */
+        /* --- CHAT BOX --- */
         .terminal-output {
-            display: block;
-            width: 90%;
-            max-width: 600px;
-            background: rgba(10, 10, 15, 0.85);
+            width: 100%;
+            background: rgba(10, 10, 15, 0.9);
             border: 1px solid var(--secondary-neon);
-            margin-top: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 20px rgba(255, 0, 230, 0.1);
-            font-family: 'Share Tech Mono', monospace;
-            padding: 0;
-            opacity: 0; /* Hidden initially */
-            transform: translateY(20px);
-            transition: opacity 1s, transform 1s;
+            margin-top: 150px; /* Space for hologram */
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 150px;
             position: relative;
             z-index: 30;
+            opacity: 0;
+            transition: opacity 1s;
         }
 
-        .terminal-header {
-            background: rgba(255, 0, 230, 0.2);
-            color: var(--secondary-neon);
-            padding: 5px 10px;
-            font-size: 0.8rem;
-            border-bottom: 1px solid var(--secondary-neon);
-            text-transform: uppercase;
-        }
-
-        .terminal-body {
-            padding: 20px;
-            min-height: 120px;
+        #typewriter-text {
+            font-size: 1.3rem;
             color: #fff;
-            font-size: 1.1rem;
             line-height: 1.6;
-            text-align: left;
         }
 
-        .blinking-cursor {
+        .cursor {
             color: var(--secondary-neon);
             animation: blinkCursor 0.8s infinite;
         }
 
-        /* --- ANIMATIONS --- */
-        @keyframes robotFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-        @keyframes scanEye {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(70px); }
-        }
-        @keyframes pulseCore {
-            0% { box-shadow: 0 0 15px var(--primary-neon); opacity: 0.8; }
-            50% { box-shadow: 0 0 30px var(--primary-neon); opacity: 1; }
-            100% { box-shadow: 0 0 15px var(--primary-neon); opacity: 0.8; }
-        }
-        @keyframes blinkCursor {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
+        /* Animations */
+        @keyframes robotFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes scanEye { 0% { transform: translateX(0); } 100% { transform: translateX(70px); } }
+        @keyframes pulseCore { 0% { box-shadow: 0 0 15px var(--primary-neon); } 50% { box-shadow: 0 0 30px var(--primary-neon); } }
+        @keyframes blinkCursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        /* Mobile Adjustments */
         @media (max-width: 600px) {
-            .robot-unit { transform: scale(0.8); margin-top: 20px; }
-            .holo-emitter-area { top: 240px; }
+            .robot-unit { transform: scale(0.8); margin-top: 10px; }
+            .holo-emitter-area { top: 120px; }
+            .terminal-output { margin-top: 180px; font-size: 1rem; }
         }
     </style>
+</head>
+<body>
+
+    <audio id="bg-audio" loop>
+        <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_ad2bf7407a.mp3" type="audio/mpeg">
+    </audio>
+
+    <canvas id="space-canvas"></canvas>
+
+    <div id="initial-overlay">
+        <h1 class="sys-msg">মিশন: সুমাইয়া রহমান</h1>
+        <p style="color: #ccc; margin-bottom: 20px;">অটোমেটেড উইশ সিস্টেম প্রস্তুত...</p>
+        <button id="engage-btn">উইশ শুরু করুন</button>
+    </div>
+
+    <div id="main-stage">
+        
+        <div class="robot-unit">
+            <div class="robot-head">
+                <div class="eye-visor"><div class="scanner-bar"></div></div>
+            </div>
+            <div class="robot-torso">
+                <div class="core-reactor"></div>
+            </div>
+            
+            <div class="holo-emitter-area">
+                <div class="holo-light-cone"></div>
+                <div class="holo-image-container">
+                    <img src="sumaiya.jpg" alt="Sumaiya" class="projected-image" onerror="this.src='https://via.placeholder.com/200x250/00f7ff/000000?text=No+Image';">
+                </div>
+            </div>
+        </div>
+
+        <div class="terminal-output">
+            <span id="typewriter-text"></span><span class="cursor">|</span>
+        </div>
+
+    </div>
 
     <script>
-        // --- LOGIC AND SEQUENCE CONTROL ---
+        // --- JS LOGIC ---
 
+        // 1. Star Animation
+        const canvas = document.getElementById('space-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let particles = [];
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random();
+            }
+            update() {
+                this.y += this.speedY;
+                if(this.y < 0) this.y = canvas.height;
+                if(this.y > canvas.height) this.y = 0;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(150, 220, 255, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        function initBg() {
+            particles = [];
+            for(let i=0; i<150; i++) particles.push(new Particle());
+        }
+        function animateBg() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateBg);
+        }
+        initBg(); animateBg();
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; initBg(); });
+
+        // 2. Interaction Logic
         const engageBtn = document.getElementById('engage-btn');
-        const initialOverlay = document.getElementById('initial-overlay');
+        const overlay = document.getElementById('initial-overlay');
         const mainStage = document.getElementById('main-stage');
-        const bgAudio = document.getElementById('bg-audio');
+        const audio = document.getElementById('bg-audio');
+        const typeText = document.getElementById('typewriter-text');
         
-        const holoStage = document.getElementById('holo-stage');
-        const holoLightCone = document.querySelector('.holo-light-cone');
-        const holoImageContainer = document.querySelector('.holo-image-container');
-        
-        const terminalOutput = document.querySelector('.terminal-output');
-        const typewriterElement = document.getElementById('typewriter-text');
+        // Hologram Elements
+        const holoCone = document.querySelector('.holo-light-cone');
+        const holoImg = document.querySelector('.holo-image-container');
 
-        // MESSAGES FOR SUMAIYA
-        // You can edit the lines inside the quotes below
-        const sequenceMessages = [
-            "Initiating Sequence...", 
-            "Target Identity Verified: Sumaiya Rahman.",
-            "Analyzing Data: 100% Awesome detected.",
-            "Loading Special Holographic Projection...",
-            "PROJECTOR_ON" // This is a keyword to trigger the image
+        // MESSAGES IN BANGLA
+        const logs = [
+            "সিস্টেম কানেক্ট হচ্ছে...",
+            "আইডেন্টিটি ভেরিফাই করা হচ্ছে...",
+            "আইডেন্টিটি ম্যাচড: সুমাইয়া রহমান।",
+            "হ্যাপিনেস লেভেল চেক করা হচ্ছে...",
+            "সবকিছু ঠিক আছে! হলোগ্রাম অন করা হচ্ছে...",
+            "PROJECTOR_ON"
         ];
 
-        const wishMessages = [
-            "Hey Sumaiya!",
-            "This is a special wish programmed just for you.",
-            "May your days be as bright as this code.",
-            "Keep smiling and never stop being amazing.",
-            "Happy Wishes from your friend, Jubair.",
-            "System Standby. ❤️"
+        const wishes = [
+            "হ্যালো সুমাইয়া! আসসালামু আলাইকুম।",
+            "অবাক হচ্ছো? আমি জুবায়েরের পার্সোনাল রোবট।",
+            "তোমার বন্ধু জুবায়ের তোমার জন্য এই ছোট্ট সারপ্রাইজটি বানিয়েছে।",
+            "তোমার দিনগুলো যেন সবসময় হাসিখুশিতে কাটে।",
+            "জীবনে অনেক বড় হও, সবসময় ভালো থেকো।",
+            "তোমার জন্য অনেক অনেক শুভকামনা। ❤️"
         ];
 
-        let seqIndex = 0;
-        let charIndex = 0;
-        let currentText = "";
+        let logIndex = 0;
         
-        // FUNCTION 1: The Start Sequence
         engageBtn.addEventListener('click', () => {
-            // 1. Play Music
-            bgAudio.volume = 0.5;
-            bgAudio.play().then(() => {
-                console.log("Audio playing");
-            }).catch(error => {
-                console.log("Audio play prevented. User interaction needed.");
-            });
-
-            // 2. Hide Overlay & Show Main Stage
-            initialOverlay.style.opacity = '0';
+            overlay.style.opacity = '0';
             setTimeout(() => {
-                initialOverlay.style.display = 'none';
+                overlay.style.display = 'none';
                 mainStage.style.opacity = '1';
                 mainStage.style.transform = 'translateY(0)';
-                
-                // 3. Show Terminal
-                terminalOutput.style.opacity = '1';
-                terminalOutput.style.transform = 'translateY(0)';
-
-                // 4. Start Typing System Logs
-                setTimeout(typeSystemLogs, 1000);
+                document.querySelector('.terminal-output').style.opacity = '1';
+                audio.volume = 0.5;
+                audio.play();
+                runLogs();
             }, 1000);
         });
 
-        // FUNCTION 2: Typing System Logs
-        function typeSystemLogs() {
-            if (seqIndex < sequenceMessages.length) {
-                let txt = sequenceMessages[seqIndex];
-
-                if (txt === "PROJECTOR_ON") {
-                    activateHologram(); // Trigger the image
-                    seqIndex++;
-                    setTimeout(typeSystemLogs, 3000); // Wait for hologram to open
+        function runLogs() {
+            if(logIndex < logs.length) {
+                let txt = logs[logIndex];
+                if(txt === "PROJECTOR_ON") {
+                    typeText.innerHTML = "Initializing Image...";
+                    holoCone.style.height = "250px";
+                    setTimeout(() => {
+                        holoImg.style.opacity = "1";
+                        holoImg.style.transform = "scale(1)";
+                        logIndex++;
+                        setTimeout(runWishes, 2000);
+                    }, 1000);
                     return;
                 }
-
-                typewriterElement.innerHTML = `> ${txt}`;
-                seqIndex++;
-                setTimeout(typeSystemLogs, 1500); // Speed of logs
-            } else {
-                // Logs done, start real wish
-                startWishTyping();
+                typeText.innerHTML = "> " + txt;
+                logIndex++;
+                setTimeout(runLogs, 1200);
             }
         }
 
-        // FUNCTION 3: Activate Hologram Animation
-        function activateHologram() {
-            typewriterElement.innerHTML = `> ACTIVATING PROJECTOR...`;
-            
-            // Expand light cone height
-            holoStage.style.height = "300px";
-            holoLightCone.style.height = "280px";
-            
-            setTimeout(() => {
-                // Fade in image
-                holoImageContainer.style.opacity = "1";
-                holoImageContainer.style.transform = "scale(1)";
-            }, 1000);
-        }
-
-        // FUNCTION 4: Type the Main Wish
         let wishIndex = 0;
-        let wishCharIndex = 0;
+        let charIndex = 0;
         let isDeleting = false;
 
-        function startWishTyping() {
-            // Clear previous text styling
-            typewriterElement.style.color = "#fff";
-            typewriterElement.innerHTML = "";
-            typeLoop();
-        }
-
-        function typeLoop() {
-            if (wishIndex < wishMessages.length) {
-                const fullText = wishMessages[wishIndex];
-
-                if (!isDeleting) {
-                    // Typing forward
-                    typewriterElement.innerHTML = fullText.substring(0, wishCharIndex + 1);
-                    wishCharIndex++;
-
-                    if (wishCharIndex === fullText.length) {
+        function runWishes() {
+            if(wishIndex < wishes.length) {
+                const currentWish = wishes[wishIndex];
+                
+                if(!isDeleting) {
+                    typeText.innerHTML = currentWish.substring(0, charIndex+1);
+                    charIndex++;
+                    if(charIndex === currentWish.length) {
                         isDeleting = true;
-                        setTimeout(typeLoop, 2000); // Wait before deleting
+                        setTimeout(runWishes, 2000); // Wait before deleting
                     } else {
-                        setTimeout(typeLoop, 50); // Typing speed
+                        setTimeout(runWishes, 80); // Typing speed
                     }
                 } else {
-                    // Deleting (unless it's the last message)
-                    if (wishIndex === wishMessages.length - 1) return; // Stop at last message
+                    // Don't delete the last message
+                    if(wishIndex === wishes.length - 1) return;
 
-                    typewriterElement.innerHTML = fullText.substring(0, wishCharIndex - 1);
-                    wishCharIndex--;
-
-                    if (wishCharIndex === 0) {
+                    typeText.innerHTML = currentWish.substring(0, charIndex-1);
+                    charIndex--;
+                    if(charIndex === 0) {
                         isDeleting = false;
                         wishIndex++;
-                        setTimeout(typeLoop, 500);
+                        setTimeout(runWishes, 500);
                     } else {
-                        setTimeout(typeLoop, 30); // Deleting speed
+                        setTimeout(runWishes, 30);
                     }
                 }
             }
